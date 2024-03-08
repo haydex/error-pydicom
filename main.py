@@ -1,40 +1,28 @@
-# V6 Scan all DICOM files, Best version
+# V7 Scan all DICOM files in a series, no error checking
 import pydicom
 import os
 
 
 def write_corrected_dicom(dicom_file_path, output_dir):
-    try:
-        # Load the original DICOM file
-        ds = pydicom.dcmread(dicom_file_path, force=True)
 
-        # Convert ds into a string
-        _ = str(ds)
+    ds = pydicom.dcmread(dicom_file_path, force=True)
 
-        # Create directory for corrected DICOM file
-        os.makedirs(output_dir, exist_ok=True)
+    # Convert ds into a string
+    _ = str(ds)
 
-        # Save the corrected DICOM file
-        corrected_file_path = os.path.join(
-            output_dir, os.path.basename(dicom_file_path)
-        )
-        ds.save_as(corrected_file_path)
-        print(f"Corrected DICOM file saved to {corrected_file_path}")
-    except pydicom.errors.InvalidDicomError:
-        print(f"Invalid DICOM file: {dicom_file_path}")
+    # Create directory for corrected DICOM file
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save the corrected DICOM file
+    corrected_file_path = os.path.join(output_dir, os.path.basename(dicom_file_path))
+    ds.save_as(corrected_file_path)
+    print(f"Corrected DICOM file saved to {corrected_file_path}")
 
 
 def correct_dicom_files_in_series(series_dir):
-    # Iterate over all files in the series directory
+
     for root, _, files in os.walk(series_dir):
         for file in files:
-            # Check if the file is a DICOM file
-            try:
-                pydicom.dcmread(
-                    os.path.join(root, file), stop_before_pixels=True
-                ).file_meta
-            except pydicom.errors.InvalidDicomError:
-                continue
             dicom_file_path = os.path.join(root, file)
             output_dir = os.path.join(root + "-corrected")
             write_corrected_dicom(dicom_file_path, output_dir)
@@ -43,14 +31,66 @@ def correct_dicom_files_in_series(series_dir):
 # Change the working directory
 os.chdir("/Users/alrubayehayder/Downloads/PHI/error-pydicom-studies")
 
-# Prompt the user to enter the series ID
 dicom_series = input("Enter the series ID: ")
 
-# Set the path to the series directory
 series_dir = os.path.join(".", dicom_series)
 
-# Correct all DICOM files in the specified series directory
 correct_dicom_files_in_series(series_dir)
+
+
+# V6 Scan all DICOM files in a series, error checking
+# import pydicom
+# import os
+
+
+# def write_corrected_dicom(dicom_file_path, output_dir):
+#     try:
+#         # Load the original DICOM file
+#         ds = pydicom.dcmread(dicom_file_path, force=True)
+
+#         # Convert ds into a string
+#         _ = str(ds)
+
+#         # Create directory for corrected DICOM file
+#         os.makedirs(output_dir, exist_ok=True)
+
+#         # Save the corrected DICOM file
+#         corrected_file_path = os.path.join(
+#             output_dir, os.path.basename(dicom_file_path)
+#         )
+#         ds.save_as(corrected_file_path)
+#         print(f"Corrected DICOM file saved to {corrected_file_path}")
+#     except pydicom.errors.InvalidDicomError:
+#         print(f"Invalid DICOM file: {dicom_file_path}")
+
+
+# def correct_dicom_files_in_series(series_dir):
+#     # Iterate over all files in the series directory
+#     for root, _, files in os.walk(series_dir):
+#         for file in files:
+#             # Check if the file is a DICOM file
+#             try:
+#                 pydicom.dcmread(
+#                     os.path.join(root, file), stop_before_pixels=True
+#                 ).file_meta
+#             except pydicom.errors.InvalidDicomError:
+#                 continue
+#             dicom_file_path = os.path.join(root, file)
+#             output_dir = os.path.join(root + "-corrected")
+#             write_corrected_dicom(dicom_file_path, output_dir)
+
+
+# # Change the working directory
+# os.chdir("/Users/alrubayehayder/Downloads/PHI/error-pydicom-studies")
+
+# # Prompt the user to enter the series ID
+# dicom_series = input("Enter the series ID: ")
+
+# # Set the path to the series directory
+# series_dir = os.path.join(".", dicom_series)
+
+# # Correct all DICOM files in the specified series directory
+# correct_dicom_files_in_series(series_dir)
 
 
 # V5 Single file
